@@ -1,0 +1,38 @@
+
+
+body{
+  background-color: #252729;
+  width: 100%;
+  height: 100vh;
+  #root{
+    flex-direction: column;
+    display: flex;
+
+    height: 100%;
+  }
+  display: flex;
+  flex-direction: column;
+}
+main{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  @media (max-width: 768px){
+    flex-direction: column;
+  }
+
+  .column{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    //  background-color: rgba(0,0,0,0.2);
+  }
+}
