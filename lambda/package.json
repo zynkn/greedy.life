@@ -1,0 +1,12 @@
+{
+  "name": "lambda",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-bundle": "1.4.0-beta.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.707.0"
+  }
+}
