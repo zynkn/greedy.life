@@ -5,34 +5,39 @@ body{
   width: 100%;
   height: 100vh;
   #root{
-    flex-direction: column;
-    display: flex;
-
     height: 100%;
+    display: flex;
+    flex-direction: column;
   }
-  display: flex;
-  flex-direction: column;
 }
 main{
-  height: 100%;
-  display: flex;
-  flex-direction: row;
+  //background: rgba(255,0,0,0.1);
   flex-grow: 1;
 }
 
 .container{
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: row;
-  @media (max-width: 768px){
+  box-sizing: border-box;
+  height: 100%;
+  //background: rgba(255,255,0,0.1);
+    @media (max-width: 768px){
     flex-direction: column;
   }
-
   .column{
+    height: 100%;
+    max-height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    //  background-color: rgba(0,0,0,0.2);
+    padding: 8px;
+    //border: 1px solid red;
+  }
+}
+
+
+span.text{
+  color: white;
+  &.--sm{
+    font-size: 12px;
   }
 }
