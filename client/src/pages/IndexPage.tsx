@@ -8,21 +8,21 @@ import Sockette from 'sockette';
 let ws:any = null;
 export  default function IndexPage(props:any){
 
-  React.useEffect(()=>{
-    ws = new Sockette('wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev', {
-      timeout: 5e3,
-      maxAttempts: 10,
-      onopen: e => console.log('Connected!', e),
-      onmessage: e => console.log('Received:', e.data),
-      onreconnect: e => console.log('Reconnecting...', e),
-      onmaximum: e => console.log('Stop Attempting!', e),
-      onclose: e => console.log('Closed!', e),
-      onerror: e => console.log('Error:', e)
-    });
-  },[]);
-  function send(){
-    ws.send("Message from client");
-  }
+  // React.useEffect(()=>{
+  //   ws = new Sockette('wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev', {
+  //     timeout: 5e3,
+  //     maxAttempts: 10,
+  //     onopen: e => console.log('Connected!', e),
+  //     onmessage: e => console.log('Received:', e.data),
+  //     onreconnect: e => console.log('Reconnecting...', e),
+  //     onmaximum: e => console.log('Stop Attempting!', e),
+  //     onclose: e => console.log('Closed!', e),
+  //     onerror: e => console.log('Error:', e)
+  //   });
+  // },[]);
+  // function send(){
+  //   ws.json({action: 'joinChat', data: "Hello, I am using WebSocket APIs in API Gateway.", nickname:'Ediya' })
+  // }
   return (
     <React.Fragment>
       <Header>
@@ -33,21 +33,18 @@ export  default function IndexPage(props:any){
           <div className="container">
             <div className="column" style={{flexBasis: '30%'}}>
               <div style={{background: 'rgba(0,0,0,0.2)', height: '300px'}}>
-                <ChatHeader />
               </div>
               <div style={{background: 'rgba(0,0,0,0.2)', height: '300px'}}>
-                <ChatHeader />
               </div>
             </div>
             <div className="column" style={{flexBasis: '40%'}}>
               <ChatHeader />
               <ChatList />
               <ChatFooter />
-              <button onClick={send}>Send</button>
+              {/* <button onClick={send}>Send</button> */}
             </div>
             <div className="column" style={{flexBasis: '30%'}}>
               <div style={{background: 'rgba(0,0,0,0.2)', flexGrow: 1, height: 0}}>
-                <ChatHeader />
 
               </div>
             </div>

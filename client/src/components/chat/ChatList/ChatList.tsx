@@ -1,6 +1,8 @@
 import React from 'react';
 import './ChatList.scss';
 import face1 from 'static/images/face1.jpg';
+import Sockette from 'sockette';
+import socketio from 'socket.io-client';
 
 const mock=[
   {
@@ -14,27 +16,100 @@ const mock=[
   }
 ]
 
+const nickname = `Unknown ${Math.random().toFixed(2)}`;
 export default function ChatList(props:any){
+  let wss:any = null;
+  let ws:any = null;
+  const [ chats, setChats] = React.useState<any>([]);
+  const [count, setCount ] = React.useState<any>(0);
+  React.useEffect(()=>{
+
+    ws = new WebSocket('wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev');
+    ws.onopen = async (e:any) => {
+      // on connecting, do nothing but log it to the console
+      console.log('connected',e)
+      setTimeout(()=>{
+        join();
+
+      },1000)
+      // ws.send(JSON.stringify({
+      //   action: 'joinChat',
+      //   nickname: nickname
+      // }));
+    }
+
+    ws.onmessage = (evt:any) => {
+        // listen to data sent from the websocket server
+        const message = JSON.parse(evt.data)
+        console.log('-----')
+        console.log(message);
+        setCount(message.userCount);
+    }
+    
+
+    // wss = new Sockette(`wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev`,{
+    //   timeout: 5e3,
+    //   maxAttempts: 10,
+    //   onopen: (e:any) => { console.log('Connected!', e);  },
+    //   onmessage: (e:any) => {
+    //     console.log('Received:', e.data);
+    //     const {message, time, userCount} = JSON.parse(e.data);
+    //     setCount(userCount);
+    //     setChats((prev:any)=>{
+    //       return [...prev, {message, time }]
+    //     })
+    //   },
+    //   onreconnect: e => console.log('Reconnecting...', e),
+    //   onmaximum: e => console.log('Stop Attempting!', e),
+    //   onclose: e => console.log('Closed!', e),
+    //   onerror: e => console.log('Error:', e)
+    // });
+  },[]);
+  function join(){
+    console.log('Send!')
+    ws.send(JSON.stringify({
+      action: 'joinChat',
+      nickname: nickname
+    }));
+    // wss.json({
+    //   action: 'joinChat',
+    //   nickname: nickname
+    // });
+  }
+
   return (
+    <>
+    <div className="ChatHeader">
+      <span className="text --sm">현재 접속자 수 : {count}</span>
+      <button onClick={join}>Join</button>
+    </div>
     <div className="ChatList">
-      <div className="DateDivider">
+      {
+        chats.map((item:any, index:number)=>{
+          return <div key={index} className="DateDivider">
+            {item.message}
+          </div>
+        })
+      }
+      {/* <div className="DateDivider">
         2020년 6월 30일
-      </div>
-      <ChatItem role={1} />
-      <div className="DateDivider">
+      </div> */}
+      {/* <ChatItem role={1} /> */}
+      {/* <div className="DateDivider">
         <b>마크롱</b> 님이 입장하였습니다.
       </div>
       <div className="DateDivider">
         <b>마크롱</b> 님이 퇴장하였습니다.
-      </div>
+      </div> */}
+      {/* <ChatItem role={0} />
       <ChatItem role={0} />
-      <ChatItem role={0} />
-      <ChatItem role={1} message={'short'} />
+      <ChatItem role={1} message={'short'} /> */}
 
       {/* {
         new Array(222).fill(0).map((item)=>(<p>{item}ttt</p>))
       } */}
     </div>
+    </>
   )
 }
 
