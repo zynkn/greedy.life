@@ -91,6 +91,9 @@ functions:
           route: $disconnect
       - websocket:
           route: sendMessage
+  joinChat:
+    handler: socketHandler.joinChat
+    events:
       - websocket:
           route: joinChat
   # hello:

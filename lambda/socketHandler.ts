@@ -2,6 +2,54 @@ import * as AWS from 'aws-sdk';
 import moment from 'moment-timezone';
 
 
+export const joinChat = async (evt:any) => {
+  const dynamoDB:any = new AWS.DynamoDB.DocumentClient();
+  function response(statusCode: number, body: object) {
+    return {
+      statusCode: statusCode || 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Headers': 'Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify(body)
+    };
+  };
+  const send = async (connectionId: string, data: any) => {
+    try {
+      const endpoint = 'ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev';
+      const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+        apiVersion: '2018-11-29',
+        endpoint: endpoint
+      });
+      const params = {
+        ConnectionId: connectionId,
+        Data: data || 'default data'
+      };
+      console.log(`getConnectionId start: params: ${JSON.stringify(params)}`);
+      return apigwManagementApi.postToConnection(params).promise().catch((e) => {
+        console.log('websocket error', e);
+        return e;
+      });
+    } catch (e) {
+      console.error(e);
+      return 'error';
+    }
+  }
+  try{
+    console.log(evt.requestContext.routeKey);
+    console.log(evt.requestContext.connectionId);
+    if(evt.requestContext.routeKey === 'joinChat'){
+      send(evt.requestContext.connectionId, "JOIN CHAT")
+    }
+    return response(200, { message: 'connected' });
+
+  }catch ({ statusCode, message, ...e }) {
+    console.error(JSON.stringify({ ...e, message: message }));
+    return response(statusCode, { ...e, message: message });
+  }
+}
 
 export const socketHandler = async (evt:any) => {
   const dynamoDB:any = new AWS.DynamoDB.DocumentClient();
@@ -17,7 +65,7 @@ export const socketHandler = async (evt:any) => {
       body: JSON.stringify(body)
     };
   };
-  
+
   const getAllId = async () => {
     const params = {
       TableName: 'greedy.life.websocket',
@@ -103,7 +151,15 @@ export const socketHandler = async (evt:any) => {
     if (evt.requestContext.routeKey === '$connect') {
       //const ids = await getAllId();
       //send(evt.requestContext.connectionId,'Hello World!')
-      const res = await putConnection();
+      putConnection();
+
+      send(
+        evt.requestContext.connectionId,
+        JSON.stringify({
+          message: `Connected!!`,
+          time: receiveAt
+        })
+      )
       // console.log(res);
       // // send(evt.requestContext.connectionId,'Hello World!')
       // console.log(ids);

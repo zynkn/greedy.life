@@ -15,66 +15,69 @@ const mock=[
     message: 'Hi'
   }
 ]
+// let wss:any = null;
 
 const nickname = `Unknown ${Math.random().toFixed(2)}`;
 export default function ChatList(props:any){
-  let wss:any = null;
-  let ws:any = null;
+  const wss = React.useRef<any>(null);
   const [ chats, setChats] = React.useState<any>([]);
   const [count, setCount ] = React.useState<any>(0);
   React.useEffect(()=>{
 
-    ws = new WebSocket('wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev');
-    ws.onopen = async (e:any) => {
-      // on connecting, do nothing but log it to the console
-      console.log('connected',e)
-      setTimeout(()=>{
-        join();
+    // ws = new WebSocket('wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev');
+    // ws.onopen = async (e:any) => {
+    //   // on connecting, do nothing but log it to the console
+    //   console.log('connected',e)
+    //   setTimeout(()=>{
+    //     join();
 
-      },1000)
-      // ws.send(JSON.stringify({
-      //   action: 'joinChat',
-      //   nickname: nickname
-      // }));
-    }
+    //   },1000)
+    //   // ws.send(JSON.stringify({
+    //   //   action: 'joinChat',
+    //   //   nickname: nickname
+    //   // }));
+    // }
 
-    ws.onmessage = (evt:any) => {
-        // listen to data sent from the websocket server
-        const message = JSON.parse(evt.data)
-        console.log('-----')
-        console.log(message);
-        setCount(message.userCount);
-    }
-    
-
-    // wss = new Sockette(`wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev`,{
-    //   timeout: 5e3,
-    //   maxAttempts: 10,
-    //   onopen: (e:any) => { console.log('Connected!', e);  },
-    //   onmessage: (e:any) => {
-    //     console.log('Received:', e.data);
-    //     const {message, time, userCount} = JSON.parse(e.data);
-    //     setCount(userCount);
-    //     setChats((prev:any)=>{
-    //       return [...prev, {message, time }]
-    //     })
-    //   },
-    //   onreconnect: e => console.log('Reconnecting...', e),
-    //   onmaximum: e => console.log('Stop Attempting!', e),
-    //   onclose: e => console.log('Closed!', e),
-    //   onerror: e => console.log('Error:', e)
-    // });
+    // ws.onmessage = (evt:any) => {
+    //     // listen to data sent from the websocket server
+    //     const message = JSON.parse(evt.data)
+    //     console.log('-----')
+    //     console.log(message);
+    //     setChats((prev:any)=>[...prev, {message: message.message, time: message.time}])
+    //     setCount(message.userCount);
+    // }
+  
+    wss.current = new Sockette(`wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev`,{
+      timeout: 5e3,
+      maxAttempts: 10,
+      onopen: (e:any) => { console.log('Connected!', e);  },
+      onmessage: (e:any) => {
+        console.log('Received:', e.data);
+        const {message, time, userCount} = JSON.parse(e.data);
+        setCount(userCount);
+        setChats((prev:any)=>{
+          return [...prev, {message, time }]
+        })
+      },
+      onreconnect: e => console.log('Reconnecting...', e),
+      onmaximum: e => console.log('Stop Attempting!', e),
+      onclose: e => console.log('Closed!', e),
+      onerror: e => console.log('Error:', e)
+    });
   },[]);
   function join(){
     console.log('Send!')
-    ws.send(JSON.stringify({
+    console.log(wss);
+    wss.current.json({
       action: 'joinChat',
       nickname: nickname
-    }));
-    // wss.json({
+    });
+
+
+        // ws.send(JSON.stringify({
     //   action: 'joinChat',
     //   nickname: nickname
-    // });
+    // }));
   }
 
   return (
