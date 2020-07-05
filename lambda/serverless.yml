@@ -47,6 +47,7 @@ provider:
     - Effect: Allow
       Action:
         - execute-api:ManageConnections
+        - execute-api:Invoke
       Resource:
         - arn:aws:execute-api:*:*:**/@connections/*
 
@@ -80,17 +81,36 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  socketHandler:
-    handler: socketHandler.socketHandler
+  echo:
+    handler: echo.echo
+    events: 
+      - websocket:
+          route: echo
+  join:
+    handler: join.join
+    events: 
+      - websocket:
+          route: join
+  connectionManager:
+    handler: connectionManager.connectionManager
     events:
       - websocket:
           route: $default
       - websocket:
           route: $connect
       - websocket:
-          route: $disconnect
-      - websocket:
-          route: sendMessage
+          route: $disconnect    
+  # socketHandler:
+  #   handler: socketHandler.socketHandler
+  #   events:
+  #     - websocket:
+  #         route: $default
+  #     - websocket:
+  #         route: $connect
+  #     - websocket:
+  #         route: $disconnect
+  #     - websocket:
+  #         route: sendMessage
   joinChat:
     handler: socketHandler.joinChat
     events:

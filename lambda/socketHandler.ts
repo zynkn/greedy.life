@@ -16,28 +16,29 @@ export const joinChat = async (evt:any) => {
       body: JSON.stringify(body)
     };
   };
-  const send = async (connectionId: string, data: any) => {
-    try {
-      const endpoint = 'ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev';
-      const apigwManagementApi = new AWS.ApiGatewayManagementApi({
-        apiVersion: '2018-11-29',
-        endpoint: endpoint
-      });
-      const params = {
-        ConnectionId: connectionId,
-        Data: data || 'default data'
-      };
-      console.log(`getConnectionId start: params: ${JSON.stringify(params)}`);
-      return apigwManagementApi.postToConnection(params).promise().catch((e) => {
-        console.log('websocket error', e);
-        return e;
-      });
-    } catch (e) {
-      console.error(e);
-      return 'error';
-    }
-  }
+ 
   try{
+    const send = async (connectionId: string, data: any) => {
+      try {
+        const endpoint = 'ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev';
+        const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+          apiVersion: '2018-11-29',
+          endpoint: endpoint
+        });
+        const params = {
+          ConnectionId: connectionId,
+          Data: data || 'default data'
+        };
+        console.log(`getConnectionId start: params: ${JSON.stringify(params)}`);
+        return apigwManagementApi.postToConnection(params).promise().catch((e) => {
+          console.log('websocket error', e);
+          return e;
+        });
+      } catch (e) {
+        console.error(e);
+        return 'error';
+      }
+    }
     console.log(evt.requestContext.routeKey);
     console.log(evt.requestContext.connectionId);
     if(evt.requestContext.routeKey === 'joinChat'){
@@ -80,28 +81,7 @@ export const socketHandler = async (evt:any) => {
     });
   };
   
-  const send = async (connectionId: string, data: any) => {
-    try {
   
-      const endpoint = 'ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev';
-      const apigwManagementApi = new AWS.ApiGatewayManagementApi({
-        apiVersion: '2018-11-29',
-        endpoint: endpoint
-      });
-      const params = {
-        ConnectionId: connectionId,
-        Data: data || 'default data'
-      };
-      console.log(`getConnectionId start: params: ${JSON.stringify(params)}`);
-      return apigwManagementApi.postToConnection(params).promise().catch((e) => {
-        console.log('websocket error', e);
-        return e;
-      });
-    } catch (e) {
-      console.error(e);
-      return 'error';
-    }
-  }
   async function putConnection() {
     const params = {
       TableName: 'greedy.life.websocket',
@@ -133,6 +113,28 @@ export const socketHandler = async (evt:any) => {
     return null;
   }
   try {
+    const send = async (connectionId: string, data: any) => {
+      try {
+    
+        const endpoint = 'ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev';
+        const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+          apiVersion: '2018-11-29',
+          endpoint: endpoint
+        });
+        const params = {
+          ConnectionId: connectionId,
+          Data: data || 'default data'
+        };
+        console.log(`getConnectionId start: params: ${JSON.stringify(params)}`);
+        return apigwManagementApi.postToConnection(params).promise().catch((e) => {
+          console.log('websocket error', e);
+          return e;
+        });
+      } catch (e) {
+        console.error(e);
+        return 'error';
+      }
+    }
     const receiveAt = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss.SSS');
     console.log(evt.body);
     console.log(evt.requestContext.routeKey);
@@ -151,7 +153,7 @@ export const socketHandler = async (evt:any) => {
     if (evt.requestContext.routeKey === '$connect') {
       //const ids = await getAllId();
       //send(evt.requestContext.connectionId,'Hello World!')
-      putConnection();
+      //putConnection();
 
       send(
         evt.requestContext.connectionId,
