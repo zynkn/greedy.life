@@ -24,33 +24,15 @@ export default function ChatList(props:any){
   const [count, setCount ] = React.useState<any>(0);
   React.useEffect(()=>{
 
-    // ws = new WebSocket('wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev');
-    // ws.onopen = async (e:any) => {
-    //   // on connecting, do nothing but log it to the console
-    //   console.log('connected',e)
-    //   setTimeout(()=>{
-    //     join();
-
-    //   },1000)
-    //   // ws.send(JSON.stringify({
-    //   //   action: 'joinChat',
-    //   //   nickname: nickname
-    //   // }));
-    // }
-
-    // ws.onmessage = (evt:any) => {
-    //     // listen to data sent from the websocket server
-    //     const message = JSON.parse(evt.data)
-    //     console.log('-----')
-    //     console.log(message);
-    //     setChats((prev:any)=>[...prev, {message: message.message, time: message.time}])
-    //     setCount(message.userCount);
-    // }
-  
     wss.current = new Sockette(`wss://ls82o57330.execute-api.ap-northeast-1.amazonaws.com/dev`,{
       timeout: 5e3,
       maxAttempts: 10,
-      onopen: (e:any) => { console.log('Connected!', e);  },
+      onopen: (e:any) => { console.log('Connected!', e);
+        wss.current.json({
+          action: 'join',
+          nickname
+        })
+      },
       onmessage: (e:any) => {
         console.log('Received:', e.data);
         const {message, time, userCount} = JSON.parse(e.data);
@@ -84,7 +66,6 @@ export default function ChatList(props:any){
     <>
     <div className="ChatHeader">
       <span className="text --sm">현재 접속자 수 : {count}</span>
-      <button onClick={join}>Join</button>
     </div>
     <div className="ChatList">
       {
